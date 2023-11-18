@@ -1,0 +1,12 @@
+[alternatives]
+grep = "ripgrep"
+ls = "exa"
+sed = "sd"
+awk = "bawk"
+find = "fd-find"
+curl = "httpie"
+top = "bottom"
+cat = "bat"
+du = "du-dust"
+tree = "exa"
+ncdu = "dua"
