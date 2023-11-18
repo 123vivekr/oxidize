@@ -2,7 +2,7 @@
 grep = "ripgrep"
 ls = "exa"
 sed = "sd"
-awk = "bawk"
+awk = "frawk"
 find = "fd-find"
 curl = "httpie"
 top = "bottom"
