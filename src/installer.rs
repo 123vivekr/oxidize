@@ -17,29 +17,16 @@ pub fn cargo_install(package_name: &str) {
     }
 }
 
-pub fn set_path() {
+pub fn update_shell_config(alias_str: Vec<String>) {
     let path_str = env::var("PATH").unwrap();
     let home_path = env::var("HOME").unwrap();
+    let cargo_path = format!("{}/.cargo/bin", home_path);
 
-    let predicate = |path: &&str| path == &format!("{}/.cargo/bin", home_path);
-
-    let shell_rc = match env::var("SHELL").as_deref() {
-        Ok("/bin/zsh") => "zshrc",
-        Ok("/bin/bash") => "bashrc",
-        _ => panic!("Unsupported shell"),
-    };
-
-    match path_str.split(':').find(predicate) {
-        Some(_) => (),
-        None => println!(
-            "Run: echo \"export PATH=$HOME/.cargo/bin:$PATH\" > $HOME/.{} if using ",
-            shell_rc
-        ),
+    let mut paths_vec: Vec<&str> = path_str.split(':').collect();
+    if let Some(index) = paths_vec.iter().position(|&path| path == cargo_path) {
+        paths_vec.remove(index);
     }
-}
 
-pub fn set_alias(alias_str: Vec<String>) {
-    let home_path = env::var("HOME").unwrap();
     let shell_rc = match env::var("SHELL").as_deref() {
         Ok("/bin/zsh") => "zshrc",
         Ok("/bin/bash") => "bashrc",
@@ -54,7 +41,11 @@ pub fn set_alias(alias_str: Vec<String>) {
 
     for alias in &alias_str {
         if let Err(e) = writeln!(file, "{}", alias) {
-            eprintln!("Couldn't write to file: {}", e);
+            eprintln!("Faile writing to file: {}", e);
         }
     }
+
+    if let Err(e) = writeln!(file, "export PATH=$HOME/.cargo/bin:$PATH") {
+        eprintln!("Faile writing to file: {}", e);
+    };
 }

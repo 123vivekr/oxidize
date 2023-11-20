@@ -15,6 +15,5 @@ fn main() {
         }
     }
 
-    installer::set_path();
-    installer::set_alias(alias_strings);
+    installer::set_shell_config(alias_strings);
 }
