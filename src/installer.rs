@@ -1,4 +1,6 @@
 use std::env;
+use std::fs::OpenOptions;
+use std::io::Write;
 use std::process::{Command, Stdio};
 
 pub fn cargo_install(package_name: &str) {
@@ -33,5 +35,26 @@ pub fn set_path() {
             "Run: echo \"export PATH=$HOME/.cargo/bin:$PATH\" > $HOME/.{} if using ",
             shell_rc
         ),
+    }
+}
+
+pub fn set_alias(alias_str: Vec<String>) {
+    let home_path = env::var("HOME").unwrap();
+    let shell_rc = match env::var("SHELL").as_deref() {
+        Ok("/bin/zsh") => "zshrc",
+        Ok("/bin/bash") => "bashrc",
+        _ => panic!("Unsupported shell"),
+    };
+
+    let mut file = OpenOptions::new()
+        .write(true)
+        .append(true)
+        .open(format!("{}/.{}", home_path, shell_rc))
+        .unwrap();
+
+    for alias in &alias_str {
+        if let Err(e) = writeln!(file, "{}", alias) {
+            eprintln!("Couldn't write to file: {}", e);
+        }
     }
 }
